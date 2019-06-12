@@ -12,7 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureMessageVerifier
 @SpringBootTest(classes = FraudDetectionApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-class BaseClass {
+public class BaseClass {
 
     @Autowired
     FraudDetectionController fraudDetectionController;
@@ -22,7 +22,7 @@ class BaseClass {
         RestAssuredMockMvc.standaloneSetup(fraudDetectionController);
     }
 
-    void trigger(){
+    public void trigger(){
         this.fraudDetectionController.trigger();
     }
 }

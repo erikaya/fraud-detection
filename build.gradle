@@ -1,12 +1,17 @@
 import org.springframework.cloud.contract.verifier.config.TestFramework
 
 buildscript {
+	ext {
+		contractVersion = "2.0.1.RELEASE"
+	}
+
 	repositories {
 		mavenCentral()
 	}
 
 	dependencies {
 		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:2.1.1.RELEASE"
+		classpath "org.springframework.cloud:spring-cloud-contract-pact:${contractVersion}"
 	}
 }
 
@@ -20,6 +25,7 @@ apply plugin: 'io.spring.dependency-management'
 apply plugin: 'groovy'
 apply plugin: 'spring-cloud-contract'
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -35,9 +41,25 @@ ext {
 }
 
 contracts {
+	contractDependency {
+		stringNotation = "${project.group}:${project.name}:${project.version}"
+	}
+
+	contractRepository {
+		repositoryUrl = "git://https://github.com/erikaya/spring-cloud-contracts-poc.git"
+	}
+
+	contractsMode = "REMOTE"
+
 	baseClassForTests = 'com.example.frauddetection.BaseClass'
 	testFramework = TestFramework.JUNIT5
 }
+
+publishStubsToScm.configProperties.contractRepository.repositoryUrl = "git://https://github.com/erikaya/spring-cloud-contracts-poc.git"
+publishStubsToScm.configProperties.contractRepository.username = "erikaya"
+publishStubsToScm.configProperties.contractRepository.password = System.getenv('CONTRACT_REPOSITORY_PASSWORD')
+
+publish.dependsOn("publishStubsToScm")
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
